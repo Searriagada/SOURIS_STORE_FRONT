@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X, Plus, Edit } from 'lucide-react';
@@ -12,10 +13,10 @@ interface ProductFormProps {
   product?: Product | null;
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({ 
-  isOpen, 
-  onClose, 
-  product 
+export const ProductForm: React.FC<ProductFormProps> = ({
+  isOpen,
+  onClose,
+  product
 }) => {
   const { createProduct, updateProduct, isCreating, isUpdating } = useProducts();
   const isEditing = !!product;
@@ -40,6 +41,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   });
 
+  useEffect(() => {
+    reset(product ? {
+      sku: product.sku,
+      name: product.name,
+      quantity: product.quantity,
+      price: product.price,
+    } : {
+      sku: '',
+      name: '',
+      quantity: 0,
+      price: 0,
+    });
+  }, [product, reset]);
+
   const onSubmit = (data: ProductFormData) => {
     if (isEditing && product) {
       updateProduct({ id: product.id, data });
@@ -56,7 +71,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   };
 
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
@@ -82,7 +96,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               {...register('sku')}
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Ej: PROD001"
+              placeholder="Ej: CL1001"
             />
             {errors.sku && (
               <p className="text-red-500 text-sm mt-1">{errors.sku.message}</p>
@@ -127,8 +141,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <input
                 {...register('price', { valueAsNumber: true })}
                 type="number"
-                min="0.01"
-                step="0.01"
+                min="1"
+                step="1"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.price && (

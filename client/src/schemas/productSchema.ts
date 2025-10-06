@@ -10,7 +10,7 @@ export const productSchema = z.object({
   quantity: z.number()
     .min(0, 'La cantidad no puede ser negativa'),
   price: z.number()
-    .min(0.01, 'El precio debe ser mayor a 0'),
+    .min(1, 'El precio debe ser mayor a 0')
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;
